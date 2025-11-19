@@ -55,12 +55,24 @@ Repositório contendo as implementações dos desafios práticos da disciplina d
 
 ---
 
-### 🔜 Desafio 4
-*Em desenvolvimento...*
+### ✅ [Desafio 4 — Microsserviços Independentes](./desafio4/)
+**Objetivo**: Implementar dois microsserviços que se comunicam via HTTP.
+
+**Tecnologias**: Docker, Python, Flask, HTTP REST
+
+**Destaques**:
+- Service A: API de gerenciamento de usuários
+- Service B: Serviço que consome e enriquece dados
+- Comunicação HTTP entre microsserviços
+- Data enrichment e análises calculadas
+- Isolamento completo com Dockerfiles separados
+- Health checks verificando dependências
+
+[📖 Ver documentação completa](./desafio4/README.md)
 
 ---
 
-### 🔜 Desafio 4
+### 🔜 Desafio 5
 *Em desenvolvimento...*
 
 ---
@@ -87,8 +99,17 @@ projeto-fccpd/
 │   ├── app/
 │   ├── reader/
 │   └── scripts/
-├── desafio3/                 # Desafio 3
-├── desafio4/                 # Desafio 4
+├── desafio3/                 # Desafio 3: Orquestração
+│   ├── README.md
+│   ├── docker-compose.yml
+│   ├── web/
+│   └── scripts/
+├── desafio4/                 # Desafio 4: Microsserviços
+│   ├── README.md
+│   ├── docker-compose.yml
+│   ├── service-a/
+│   ├── service-b/
+│   └── scripts/
 └── desafio5/                 # Desafio 5
 ```
 
@@ -167,11 +188,20 @@ Cada desafio possui seu próprio README.md com instruções detalhadas de execu�
 - ✅ Health checks em cascata
 - ✅ Comunicação entre microsserviços
 
+### Desafio 4
+- ✅ Arquitetura de microsserviços
+- ✅ Comunicação HTTP/REST
+- ✅ Service-to-service communication
+- ✅ Data enrichment pattern
+- ✅ Isolamento com containers
+- ✅ Health checks de dependências
+- ✅ Error handling em comunicação
+
 ### Desafios Futuros
-- 🔜 Microsserviços
 - 🔜 Balanceamento de carga
-- 🔜 Mensageria
+- 🔜 Mensageria assíncrona
 - 🔜 Escalabilidade horizontal
+- 🔜 Service mesh
 
 ## 🛠️ Boas Práticas Aplicadas
 
@@ -190,7 +220,7 @@ Cada desafio possui seu próprio README.md com instruções detalhadas de execu�
 | Desafio 1 | ✅ Concluído | 20/20 pts | Docker, Flask, Python |
 | Desafio 2 | ✅ Concluído | 20/20 pts | Docker, PostgreSQL, Volumes |
 | Desafio 3 | ✅ Concluído | 25/25 pts | Docker Compose, PostgreSQL, Redis |
-| Desafio 4 | 🔜 Pendente | - | - |
+| Desafio 4 | ✅ Concluído | 20/20 pts | Microsserviços, HTTP REST |
 | Desafio 5 | 🔜 Pendente | - | - |
 
 ## 👤 Autor
