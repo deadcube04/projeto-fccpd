@@ -1,0 +1,52 @@
+services:
+  # Servidor Web Flask
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: desafio1-server
+    hostname: server
+    networks:
+      - desafio1-network
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Cliente HTTP
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: desafio1-client
+    hostname: client
+    networks:
+      - desafio1-network
+    depends_on:
+      server:
+        condition: service_healthy
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# Rede customizada
+networks:
+  desafio1-network:
+    name: desafio1-network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
