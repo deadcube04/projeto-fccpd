@@ -1,0 +1,111 @@
+services:
+  # Banco de dados PostgreSQL
+  postgres:
+    image: postgres:16-alpine
+    container_name: desafio3-postgres
+    hostname: postgres
+    environment:
+      POSTGRES_DB: products_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - desafio3-network
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Cache Redis
+  redis:
+    image: redis:7-alpine
+    container_name: desafio3-redis
+    hostname: redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - desafio3-network
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Aplicação Web (API Gateway)
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: desafio3-web
+    hostname: web
+    environment:
+      # Configurações do PostgreSQL
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: products_db
+      DB_USER: postgres
+      DB_PASSWORD: postgres123
+      # Configurações do Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_DB: 0
+      # Configurações do cache
+      CACHE_TTL: 60
+    networks:
+      - desafio3-network
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# Rede interna customizada
+networks:
+  desafio3-network:
+    name: desafio3-network
+    driver: bridge
+
+# Volumes persistentes
+volumes:
+  postgres_data:
+    name: desafio3_postgres_data
+    driver: local
+  redis_data:
+    name: desafio3_redis_data
+    driver: local

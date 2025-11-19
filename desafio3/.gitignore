@@ -1,0 +1,31 @@
+# Ignora arquivos Python compilados
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Ignora ambientes virtuais
+venv/
+env/
+ENV/
+.venv
+
+# Ignora arquivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignora logs
+*.log
+logs/
+
+# Ignora arquivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignora dados locais
+pgdata/
+postgres_data/
+redis_data/

@@ -38,12 +38,24 @@ Repositório contendo as implementações dos desafios práticos da disciplina d
 
 ---
 
-### 🔜 Desafio 3
-*Em desenvolvimento...*
+### ✅ [Desafio 3 — Orquestração com Docker Compose](./desafio3/)
+**Objetivo**: Orquestrar múltiplos serviços interdependentes usando Docker Compose.
+
+**Tecnologias**: Docker Compose, Python, Flask, PostgreSQL, Redis
+
+**Destaques**:
+- API Gateway com 3 serviços integrados
+- Sistema de cache distribuído com Redis
+- Dependências e health checks avançados
+- Cache-aside pattern implementado
+- Estatísticas de performance em tempo real
+- Scripts de demonstração automatizados
+
+[📖 Ver documentação completa](./desafio3/README.md)
 
 ---
 
-### 🔜 Desafio 3
+### 🔜 Desafio 4
 *Em desenvolvimento...*
 
 ---
@@ -146,6 +158,15 @@ Cada desafio possui seu próprio README.md com instruções detalhadas de execu�
 - ✅ Container isolamento
 - ✅ Backup e restore
 
+### Desafio 3
+- ✅ Docker Compose avançado
+- ✅ Orquestração de serviços
+- ✅ Cache distribuído (Redis)
+- ✅ API Gateway pattern
+- ✅ Service dependencies (depends_on)
+- ✅ Health checks em cascata
+- ✅ Comunicação entre microsserviços
+
 ### Desafios Futuros
 - 🔜 Microsserviços
 - 🔜 Balanceamento de carga
@@ -168,7 +189,7 @@ Cada desafio possui seu próprio README.md com instruções detalhadas de execu�
 |---------|--------|-----------|-------------|
 | Desafio 1 | ✅ Concluído | 20/20 pts | Docker, Flask, Python |
 | Desafio 2 | ✅ Concluído | 20/20 pts | Docker, PostgreSQL, Volumes |
-| Desafio 3 | 🔜 Pendente | - | - |
+| Desafio 3 | ✅ Concluído | 25/25 pts | Docker Compose, PostgreSQL, Redis |
 | Desafio 4 | 🔜 Pendente | - | - |
 | Desafio 5 | 🔜 Pendente | - | - |
 
