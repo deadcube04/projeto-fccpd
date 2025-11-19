@@ -22,7 +22,23 @@ Repositório contendo as implementações dos desafios práticos da disciplina d
 
 ---
 
-### 🔜 Desafio 2
+### ✅ [Desafio 2 — Volumes e Persistência](./desafio2/)
+**Objetivo**: Demonstrar persistência de dados usando volumes Docker.
+
+**Tecnologias**: Docker, Python, Flask, PostgreSQL, Docker Volumes
+
+**Destaques**:
+- API REST completa (CRUD de tarefas)
+- PostgreSQL com volume persistente
+- Container leitor separado
+- Demonstração automatizada de persistência
+- Sistema de logs de operações
+
+[📖 Ver documentação completa](./desafio2/README.md)
+
+---
+
+### 🔜 Desafio 3
 *Em desenvolvimento...*
 
 ---
@@ -53,7 +69,12 @@ projeto-fccpd/
 │   ├── server/
 │   ├── client/
 │   └── scripts/
-├── desafio2/                 # Desafio 2
+├── desafio2/                 # Desafio 2: Volumes e Persistência
+│   ├── README.md
+│   ├── docker-compose.yml
+│   ├── app/
+│   ├── reader/
+│   └── scripts/
 ├── desafio3/                 # Desafio 3
 ├── desafio4/                 # Desafio 4
 └── desafio5/                 # Desafio 5
@@ -117,11 +138,18 @@ Cada desafio possui seu próprio README.md com instruções detalhadas de execu�
 - ✅ APIs REST
 - ✅ Logging estruturado
 
+### Desafio 2
+- ✅ Volumes Docker
+- ✅ Persistência de dados
+- ✅ PostgreSQL
+- ✅ Named Volumes
+- ✅ Container isolamento
+- ✅ Backup e restore
+
 ### Desafios Futuros
 - 🔜 Microsserviços
 - 🔜 Balanceamento de carga
 - 🔜 Mensageria
-- 🔜 Persistência de dados
 - 🔜 Escalabilidade horizontal
 
 ## 🛠️ Boas Práticas Aplicadas
@@ -139,7 +167,7 @@ Cada desafio possui seu próprio README.md com instruções detalhadas de execu�
 | Desafio | Status | Pontuação | Tecnologias |
 |---------|--------|-----------|-------------|
 | Desafio 1 | ✅ Concluído | 20/20 pts | Docker, Flask, Python |
-| Desafio 2 | 🔜 Pendente | - | - |
+| Desafio 2 | ✅ Concluído | 20/20 pts | Docker, PostgreSQL, Volumes |
 | Desafio 3 | 🔜 Pendente | - | - |
 | Desafio 4 | 🔜 Pendente | - | - |
 | Desafio 5 | 🔜 Pendente | - | - |
