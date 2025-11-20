@@ -52,9 +52,9 @@ def init_database():
                     description TEXT,
                     status VARCHAR(20) DEFAULT 'pending',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP           
                 )
-            )
+        """)
             
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS operation_logs (

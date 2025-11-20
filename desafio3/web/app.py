@@ -87,11 +87,12 @@ def init_database():
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-            )
+            """)
             
             cursor.execute("""
                 CREATE INDEX IF NOT EXISTS idx_products_category 
                 ON products(category)
+                           """
             )
             
             cursor.execute("""
