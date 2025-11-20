@@ -1,25 +1,9 @@
-"""
-Microsserviço A - Users Service
-
-API REST que gerencia informações de usuários.
-Fornece endpoints para listar, buscar, criar e atualizar usuários.
-
-Endpoints:
-    GET  /users          - Lista todos os usuários
-    GET  /users/<id>     - Busca usuário por ID
-    POST /users          - Cria novo usuário
-    PUT  /users/<id>     - Atualiza usuário existente
-    GET  /health         - Health check do serviço
-    GET  /stats          - Estatísticas do serviço
-"""
-
 from flask import Flask, jsonify, request
 from datetime import datetime, timedelta
 import logging
 import random
 import uuid
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='[%(asctime)s] %(levelname)s - %(message)s',
@@ -29,14 +13,8 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# ============================================================================
-# DADOS SIMULADOS
-# ============================================================================
-
-# Base de dados em memória (simula um banco de dados)
 USERS_DB = {}
 
-# Estatísticas do serviço
 STATS = {
     'total_requests': 0,
     'users_created': 0,
@@ -46,8 +24,6 @@ STATS = {
 
 
 def initialize_sample_data():
-    """Inicializa base de dados com usuários de exemplo"""
-    
     sample_users = [
         {
             'id': 1,
@@ -141,13 +117,8 @@ def initialize_sample_data():
     logger.info(f"Initialized database with {len(sample_users)} sample users")
 
 
-# ============================================================================
-# MIDDLEWARE & HELPERS
-# ============================================================================
-
 @app.before_request
 def before_request():
-    """Executa antes de cada requisição"""
     STATS['total_requests'] += 1
     logger.info(f"{request.method} {request.path} - Client: {request.remote_addr}")
 
@@ -310,7 +281,6 @@ def get_users():
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
-    """Busca usuário específico por ID"""
     user = USERS_DB.get(user_id)
     
     if not user:
@@ -427,7 +397,6 @@ def update_user(user_id):
 
 @app.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    """Remove usuário (soft delete - marca como inativo)"""
     user = USERS_DB.get(user_id)
     
     if not user:

@@ -1,8 +1,3 @@
-"""
-Leitor de Dados - Desafio 2
-Container separado que lê e exibe dados persistidos no volume PostgreSQL.
-"""
-
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -11,7 +6,6 @@ import sys
 import time
 from datetime import datetime
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -19,7 +13,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Configurações do banco de dados
 DB_CONFIG = {
     'host': os.getenv('DB_HOST', 'postgres'),
     'port': int(os.getenv('DB_PORT', 5432)),
@@ -30,7 +23,6 @@ DB_CONFIG = {
 
 
 def get_db_connection():
-    """Cria conexão com o banco de dados PostgreSQL."""
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         return conn
@@ -40,7 +32,6 @@ def get_db_connection():
 
 
 def wait_for_database():
-    """Aguarda o banco de dados ficar disponível."""
     max_retries = 30
     retry_count = 0
     
@@ -62,7 +53,6 @@ def wait_for_database():
 
 
 def read_tasks():
-    """Lê todas as tarefas do banco de dados."""
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -83,7 +73,6 @@ def read_tasks():
 
 
 def read_logs():
-    """Lê os logs de operações."""
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)

@@ -1,14 +1,8 @@
-"""
-Servidor Web Flask - Desafio 1
-Servidor HTTP que responde requisições na porta 8080 e registra logs detalhados.
-"""
-
 from flask import Flask, jsonify, request
 from datetime import datetime
 import logging
 import sys
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -21,13 +15,11 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Contador de requisições
 request_counter = 0
 
 
 @app.route('/', methods=['GET'])
 def index():
-    """Endpoint principal que responde com informações do servidor."""
     global request_counter
     request_counter += 1
     
@@ -50,7 +42,6 @@ def index():
 
 @app.route('/health', methods=['GET'])
 def health():
-    """Endpoint de health check."""
     logger.info("Health check requisitado")
     return jsonify({
         "status": "healthy",
@@ -61,7 +52,6 @@ def health():
 
 @app.route('/stats', methods=['GET'])
 def stats():
-    """Endpoint que retorna estatísticas do servidor."""
     logger.info("Estatísticas requisitadas")
     return jsonify({
         "total_requests": request_counter,
@@ -72,7 +62,6 @@ def stats():
 
 @app.errorhandler(404)
 def not_found(error):
-    """Handler para rotas não encontradas."""
     logger.warning(f"Rota não encontrada: {request.path}")
     return jsonify({
         "status": "error",

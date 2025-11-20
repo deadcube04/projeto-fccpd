@@ -1,24 +1,9 @@
-"""
-Microsserviço B - Profile Service
-
-API REST que consome o Users Service (Microservice A) e combina informações
-para exibir perfis enriquecidos dos usuários.
-
-Endpoints:
-    GET  /profiles           - Lista perfis enriquecidos de todos os usuários
-    GET  /profiles/<id>      - Busca perfil enriquecido de usuário específico
-    GET  /profiles/<id>/summary - Resumo executivo do perfil
-    GET  /health             - Health check do serviço
-    GET  /stats              - Estatísticas do serviço
-"""
-
 from flask import Flask, jsonify, request
 from datetime import datetime, timedelta
 import requests
 import logging
 from typing import Dict, List, Optional
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='[%(asctime)s] %(levelname)s - %(message)s',
@@ -28,14 +13,8 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# ============================================================================
-# CONFIGURAÇÃO
-# ============================================================================
-
-# URL do Microsserviço A (Users Service)
 USERS_SERVICE_URL = "http://service-a:5000"
 
-# Estatísticas do serviço
 STATS = {
     'total_requests': 0,
     'profiles_generated': 0,
@@ -45,12 +24,7 @@ STATS = {
 }
 
 
-# ============================================================================
-# CLIENTE HTTP PARA MICROSSERVIÇO A
-# ============================================================================
-
 class UsersServiceClient:
-    """Cliente para comunicação com o Users Service (Microservice A)"""
     
     def __init__(self, base_url: str):
         self.base_url = base_url

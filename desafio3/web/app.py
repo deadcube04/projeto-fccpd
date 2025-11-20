@@ -1,9 +1,3 @@
-"""
-API Gateway - Desafio 3
-Serviço web que integra banco de dados PostgreSQL e cache Redis.
-Demonstra orquestração de múltiplos serviços com Docker Compose.
-"""
-
 import os
 import json
 import logging
@@ -15,7 +9,6 @@ from psycopg2.extras import RealDictCursor
 import redis
 import time
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -25,7 +18,6 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Configurações do PostgreSQL
 DB_CONFIG = {
     'host': os.getenv('DB_HOST', 'postgres'),
     'port': int(os.getenv('DB_PORT', 5432)),
@@ -34,7 +26,6 @@ DB_CONFIG = {
     'password': os.getenv('DB_PASSWORD', 'postgres123')
 }
 
-# Configurações do Redis
 REDIS_CONFIG = {
     'host': os.getenv('REDIS_HOST', 'redis'),
     'port': int(os.getenv('REDIS_PORT', 6379)),
@@ -42,10 +33,8 @@ REDIS_CONFIG = {
     'decode_responses': True
 }
 
-# Cache TTL (segundos)
 CACHE_TTL = int(os.getenv('CACHE_TTL', 60))
 
-# Clientes globais
 redis_client = None
 db_stats = {
     'queries': 0,
@@ -55,7 +44,6 @@ db_stats = {
 
 
 def get_redis_client():
-    """Obtém cliente Redis."""
     global redis_client
     if redis_client is None:
         try:
@@ -69,7 +57,6 @@ def get_redis_client():
 
 
 def get_db_connection():
-    """Cria conexão com PostgreSQL."""
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         return conn
@@ -79,7 +66,6 @@ def get_db_connection():
 
 
 def init_database():
-    """Inicializa o banco de dados."""
     max_retries = 30
     retry_count = 0
     
@@ -90,7 +76,6 @@ def init_database():
             conn = get_db_connection()
             cursor = conn.cursor()
             
-            # Cria tabela de produtos
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS products (
                     id SERIAL PRIMARY KEY,
@@ -102,15 +87,13 @@ def init_database():
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-            """)
+            )
             
-            # Cria índice para busca por categoria
             cursor.execute("""
                 CREATE INDEX IF NOT EXISTS idx_products_category 
                 ON products(category)
-            """)
+            )
             
-            # Cria tabela de requisições (para demonstração)
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS request_logs (
                     id SERIAL PRIMARY KEY,
@@ -138,7 +121,6 @@ def init_database():
 
 
 def init_redis():
-    """Inicializa Redis."""
     max_retries = 30
     retry_count = 0
     
@@ -163,7 +145,6 @@ def init_redis():
 
 
 def log_request(endpoint, method, cache_hit=False):
-    """Registra requisição no banco."""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -179,7 +160,6 @@ def log_request(endpoint, method, cache_hit=False):
 
 
 def get_from_cache(key):
-    """Obtém valor do cache."""
     try:
         client = get_redis_client()
         if client:
@@ -222,7 +202,6 @@ def invalidate_cache_pattern(pattern):
 
 @app.route('/')
 def index():
-    """Endpoint principal."""
     return jsonify({
         "service": "Product Catalog API",
         "version": "1.0.0",
@@ -249,13 +228,11 @@ def index():
 
 @app.route('/health')
 def health():
-    """Health check de todos os serviços."""
     health_status = {
         "api": "healthy",
         "timestamp": datetime.now().isoformat()
     }
     
-    # Verifica PostgreSQL
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -266,7 +243,6 @@ def health():
     except Exception as e:
         health_status["database"] = f"unhealthy: {str(e)}"
     
-    # Verifica Redis
     try:
         client = get_redis_client()
         if client:
@@ -277,7 +253,6 @@ def health():
     except Exception as e:
         health_status["cache"] = f"unhealthy: {str(e)}"
     
-    # Status geral
     all_healthy = all(
         status == "healthy" 
         for key, status in health_status.items() 
@@ -291,17 +266,14 @@ def health():
 
 @app.route('/services')
 def services_status():
-    """Status detalhado dos serviços."""
     status = {
         "database": {"connected": False, "config": DB_CONFIG.copy()},
         "cache": {"connected": False, "config": REDIS_CONFIG.copy()},
         "stats": db_stats.copy()
     }
     
-    # Remove senhas das configs
     status["database"]["config"].pop("password", None)
     
-    # Testa PostgreSQL
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -318,7 +290,6 @@ def services_status():
     except Exception as e:
         status["database"]["error"] = str(e)
     
-    # Testa Redis
     try:
         client = get_redis_client()
         if client:
@@ -335,10 +306,8 @@ def services_status():
 
 @app.route('/products', methods=['GET'])
 def get_products():
-    """Lista todos os produtos (com cache)."""
-    cache_key = "products:all"
+    cache_key = 'products:all'
     
-    # Tenta obter do cache
     cached_data = get_from_cache(cache_key)
     if cached_data:
         log_request('/products', 'GET', cache_hit=True)
@@ -349,7 +318,6 @@ def get_products():
             "products": cached_data
         }), 200
     
-    # Busca do banco
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -360,10 +328,8 @@ def get_products():
         
         db_stats['queries'] += 1
         
-        # Converte para dicionário
         products_list = [dict(p) for p in products]
         
-        # Salva no cache
         set_to_cache(cache_key, products_list)
         
         log_request('/products', 'GET', cache_hit=False)
@@ -383,7 +349,6 @@ def get_products():
 
 @app.route('/products', methods=['POST'])
 def create_product():
-    """Cria um novo produto."""
     try:
         data = request.get_json()
         
@@ -419,7 +384,6 @@ def create_product():
         
         db_stats['queries'] += 1
         
-        # Invalida cache
         invalidate_cache_pattern("products:*")
         
         logger.info(f"✓ Produto criado: {data['name']}")
@@ -437,10 +401,8 @@ def create_product():
 
 @app.route('/products/<int:product_id>', methods=['GET'])
 def get_product(product_id):
-    """Obtém produto por ID (com cache)."""
-    cache_key = f"product:{product_id}"
+    cache_key = f'product:{product_id}'
     
-    # Tenta cache
     cached_data = get_from_cache(cache_key)
     if cached_data:
         log_request(f'/products/{product_id}', 'GET', cache_hit=True)
@@ -450,7 +412,6 @@ def get_product(product_id):
             "product": cached_data
         }), 200
     
-    # Busca do banco
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -466,7 +427,6 @@ def get_product(product_id):
         
         product_dict = dict(product)
         
-        # Salva no cache
         set_to_cache(cache_key, product_dict)
         
         log_request(f'/products/{product_id}', 'GET', cache_hit=False)
@@ -483,7 +443,6 @@ def get_product(product_id):
 
 @app.route('/products/<int:product_id>', methods=['PUT'])
 def update_product(product_id):
-    """Atualiza produto."""
     try:
         data = request.get_json()
         
@@ -522,7 +481,6 @@ def update_product(product_id):
         
         db_stats['queries'] += 1
         
-        # Invalida cache
         invalidate_cache_pattern(f"product:{product_id}")
         invalidate_cache_pattern("products:*")
         
@@ -541,7 +499,6 @@ def update_product(product_id):
 
 @app.route('/products/<int:product_id>', methods=['DELETE'])
 def delete_product(product_id):
-    """Remove produto."""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -556,7 +513,6 @@ def delete_product(product_id):
         
         db_stats['queries'] += 1
         
-        # Invalida cache
         invalidate_cache_pattern(f"product:{product_id}")
         invalidate_cache_pattern("products:*")
         
@@ -574,10 +530,8 @@ def delete_product(product_id):
 
 @app.route('/products/category/<category>')
 def get_products_by_category(category):
-    """Obtém produtos por categoria (com cache)."""
     cache_key = f"products:category:{category}"
     
-    # Tenta cache
     cached_data = get_from_cache(cache_key)
     if cached_data:
         log_request(f'/products/category/{category}', 'GET', cache_hit=True)
@@ -589,7 +543,6 @@ def get_products_by_category(category):
             "products": cached_data
         }), 200
     
-    # Busca do banco
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -605,7 +558,6 @@ def get_products_by_category(category):
         
         products_list = [dict(p) for p in products]
         
-        # Salva no cache
         set_to_cache(cache_key, products_list)
         
         log_request(f'/products/category/{category}', 'GET', cache_hit=False)
@@ -624,16 +576,13 @@ def get_products_by_category(category):
 
 @app.route('/stats')
 def get_stats():
-    """Estatísticas do sistema."""
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
         
-        # Total de produtos
         cursor.execute("SELECT COUNT(*) as total FROM products")
         total_products = cursor.fetchone()['total']
         
-        # Produtos por categoria
         cursor.execute("""
             SELECT category, COUNT(*) as count 
             FROM products 
@@ -641,11 +590,9 @@ def get_stats():
         """)
         by_category = cursor.fetchall()
         
-        # Total de requisições
         cursor.execute("SELECT COUNT(*) as total FROM request_logs")
         total_requests = cursor.fetchone()['total']
         
-        # Cache hits
         cursor.execute("""
             SELECT COUNT(*) as hits 
             FROM request_logs 
@@ -656,7 +603,6 @@ def get_stats():
         cursor.close()
         conn.close()
         
-        # Estatísticas do Redis
         cache_stats = {}
         try:
             client = get_redis_client()
@@ -668,7 +614,6 @@ def get_stats():
         except:
             pass
         
-        # Taxa de cache hit
         total_req = db_stats['cache_hits'] + db_stats['cache_misses']
         hit_rate = (db_stats['cache_hits'] / total_req * 100) if total_req > 0 else 0
         
@@ -695,7 +640,6 @@ def get_stats():
 
 @app.route('/cache/clear')
 def clear_cache():
-    """Limpa todo o cache."""
     try:
         client = get_redis_client()
         if client:
@@ -723,7 +667,6 @@ if __name__ == '__main__':
     logger.info(f"Cache TTL: {CACHE_TTL}s")
     logger.info("=" * 70)
     
-    # Inicializa serviços
     db_ready = init_database()
     redis_ready = init_redis()
     

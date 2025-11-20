@@ -1,8 +1,3 @@
-"""
-Aplicação de Gerenciamento de Tarefas - Desafio 2
-Aplicação Flask que gerencia tarefas em um banco PostgreSQL com persistência.
-"""
-
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -12,7 +7,6 @@ import logging
 import sys
 import time
 
-# Configuração de logging
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -22,7 +16,6 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 
-# Configurações do banco de dados
 DB_CONFIG = {
     'host': os.getenv('DB_HOST', 'postgres'),
     'port': int(os.getenv('DB_PORT', 5432)),
@@ -33,7 +26,6 @@ DB_CONFIG = {
 
 
 def get_db_connection():
-    """Cria conexão com o banco de dados PostgreSQL."""
     try:
         conn = psycopg2.connect(**DB_CONFIG)
         return conn
@@ -43,7 +35,6 @@ def get_db_connection():
 
 
 def init_database():
-    """Inicializa o banco de dados e cria as tabelas necessárias."""
     max_retries = 30
     retry_count = 0
     
@@ -54,7 +45,6 @@ def init_database():
             conn = get_db_connection()
             cursor = conn.cursor()
             
-            # Cria tabela de tarefas
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS tasks (
                     id SERIAL PRIMARY KEY,
@@ -64,9 +54,8 @@ def init_database():
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
-            """)
+            )
             
-            # Cria tabela de logs de operações
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS operation_logs (
                     id SERIAL PRIMARY KEY,
@@ -82,7 +71,6 @@ def init_database():
             
             logger.info("✓ Banco de dados inicializado com sucesso!")
             
-            # Registra inicialização
             log_operation("INIT", "Banco de dados inicializado")
             
             return True
@@ -97,7 +85,6 @@ def init_database():
 
 
 def log_operation(operation, description):
-    """Registra uma operação no banco de dados."""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -114,7 +101,6 @@ def log_operation(operation, description):
 
 @app.route('/')
 def index():
-    """Endpoint principal com informações da API."""
     return jsonify({
         "service": "Task Manager API",
         "version": "1.0.0",
@@ -134,7 +120,6 @@ def index():
 
 @app.route('/health')
 def health():
-    """Health check com verificação de conexão ao banco."""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -158,7 +143,6 @@ def health():
 
 @app.route('/tasks', methods=['GET'])
 def get_tasks():
-    """Lista todas as tarefas."""
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -220,7 +204,6 @@ def create_task():
 
 @app.route('/tasks/<int:task_id>', methods=['GET'])
 def get_task(task_id):
-    """Obtém uma tarefa específica por ID."""
     try:
         conn = get_db_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -286,7 +269,6 @@ def update_task(task_id):
 
 @app.route('/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):
-    """Remove uma tarefa."""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()

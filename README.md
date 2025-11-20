@@ -72,13 +72,22 @@ Repositório contendo as implementações dos desafios práticos da disciplina d
 
 ---
 
-### 🔜 Desafio 5
-*Em desenvolvimento...*
+### ✅ [Desafio 5 — API Gateway com Microsserviços](./desafio5/)
+**Objetivo**: Implementar um API Gateway que centraliza acesso a múltiplos microsserviços.
 
----
+**Tecnologias**: Docker, Python, Flask, HTTP REST, API Gateway Pattern
 
-### 🔜 Desafio 5
-*Em desenvolvimento...*
+**Destaques**:
+- API Gateway como ponto de entrada único
+- Microsserviço de Users (CRUD completo)
+- Microsserviço de Orders (CRUD + estatísticas)
+- Proxy de requisições para backends
+- Endpoints de orquestração (combina dados de múltiplos serviços)
+- Comunicação HTTP síncrona entre serviços
+- Tratamento de erros e timeouts
+- Health checks em cascata
+
+[📖 Ver documentação completa](./desafio5/README.md)
 
 ---
 
@@ -197,6 +206,16 @@ Cada desafio possui seu próprio README.md com instruções detalhadas de execu�
 - ✅ Health checks de dependências
 - ✅ Error handling em comunicação
 
+### Desafio 5
+- ✅ API Gateway pattern
+- ✅ Microsserviços independentes
+- ✅ Proxy de requisições
+- ✅ Orquestração de serviços
+- ✅ Comunicação HTTP síncrona
+- ✅ Service-to-service orchestration
+- ✅ Data aggregation
+- ✅ Error handling e timeouts
+
 ### Desafios Futuros
 - 🔜 Balanceamento de carga
 - 🔜 Mensageria assíncrona
@@ -221,7 +240,7 @@ Cada desafio possui seu próprio README.md com instruções detalhadas de execu�
 | Desafio 2 | ✅ Concluído | 20/20 pts | Docker, PostgreSQL, Volumes |
 | Desafio 3 | ✅ Concluído | 25/25 pts | Docker Compose, PostgreSQL, Redis |
 | Desafio 4 | ✅ Concluído | 20/20 pts | Microsserviços, HTTP REST |
-| Desafio 5 | 🔜 Pendente | - | - |
+| Desafio 5 | ✅ Concluído | 25/25 pts | API Gateway, Microsserviços, Orquestração |
 
 ## 👤 Autor
 
